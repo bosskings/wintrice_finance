@@ -3,6 +3,7 @@
  * Highly customized 25-page financial report according to WINTRICE planning structure.
  */
 
+import { log } from "console";
 import PDFDocument from "pdfkit";
 import { Readable } from "stream";
 
@@ -20,9 +21,11 @@ function percent(p, digits = 0) {
  * To adapt for dynamic/production, adjust all DEMO_DATA references accordingly.
  * @returns {PDFDocument} - Readable PDFKit stream for download
  */
-function generateFinancialReportPDF() {
-  const data = req.body; // Get the data from the user's form submission
+function generateFinancialReportPDF(formData) {
 
+  const data = formData; // Get the data from the user's form submission
+  console.log(data);
+  
   const doc = new PDFDocument({
     size: 'A4',
     margins: { top: 50, bottom: 50, left: 50, right: 50 }
@@ -364,7 +367,7 @@ async function generateReport(req, res) {
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=WINTRICE_Financial_Blueprint.pdf');
 
-    const pdfStream = generateFinancialReportPDF();
+    const pdfStream = generateFinancialReportPDF(req.body);
     pdfStream.pipe(res);
   } catch (error) {
     console.error('Error generating financial report:', error);
