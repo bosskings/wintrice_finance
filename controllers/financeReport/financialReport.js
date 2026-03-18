@@ -622,7 +622,7 @@ async function generateReport(req, res) {
 }
 
 async function generateReportJSON(req, res) {
-  console.log('came here')
+  
   try {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Content-Disposition', 'attachment; filename=WINTRICE_Financial_Blueprint.json');

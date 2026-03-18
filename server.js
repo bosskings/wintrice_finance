@@ -1,6 +1,5 @@
 import express from "express";
-import financeRouter from "./routes/financialReport.js"
-import { runAllTests } from "./controllers/financialReport.test.js";
+import financeRouter from "./routes/finance/financialReport.js"
 import cors from "cors";
 
 
@@ -19,7 +18,6 @@ app.get('/', (req, res)=>{
     res.json({message:"all good"})
 })
 
-app.get('/test', runAllTests)
 
 app.listen(4500, ()=>{
     console.log('sever is running on port 4500');

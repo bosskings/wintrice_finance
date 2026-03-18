@@ -9,7 +9,7 @@ import {
   // calculateSocialSecurity,
   // calculateRetirementIncome,
   // calculateCombinedIncome
-} from './financialReport.js';
+} from './financeReport/financialReport.js';
 
 // Test Case 1: Young Professional (25 years old)
 const testCase1 = {
