@@ -29,7 +29,7 @@ const signUp = async (req, res) => {
         );
 
         return res.status(201).json({
-            success: true,
+            status: "SUCCESS",
             message: "User registered successfully.",
             token,
             user: {
@@ -41,7 +41,10 @@ const signUp = async (req, res) => {
 
     } catch (error) {
         console.error('User registration error:', error);
-        return res.status(500).json({ success: false, message: "Internal server error." });
+        return res.status(500).json({ 
+            status: "ERROR", 
+            message: "Internal server error."+error 
+        });
     }
 }
 
