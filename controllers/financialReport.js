@@ -359,6 +359,248 @@ function generateFinancialReportPDF(formData) {
 }
 
 /**
+ * Generate data for the 25 report pages as JSON.
+ * Returns an array of objects, each representing a report page's title and relevant data.
+ */
+function financialReportJSON(formData) {
+  const data = formData;
+
+  // Helper so currency/percent will format values
+  const jsonData = [
+    // PAGE 1: Cover
+    {
+      page: 1,
+      title: "WINTRICE Financial Planning Blue Print",
+      section: "Cover",
+      preparedFor: data.clientName,
+      employer: data.employer,
+      date: data.date,
+      preparedBy: data.preparedBy
+    },
+    // PAGE 2: Personal Profile
+    {
+      page: 2,
+      title: "Personal Profile Summary",
+      section: "Client Snapshot",
+      profile: {
+        name: data.clientName,
+        age: data.currentAge,
+        retirementAgeGoal: data.retirementAge,
+        lifeExpectancy: data.lifeExpectancy,
+        maritalStatus: data.maritalStatus,
+        dependents: data.dependents,
+        annualSalary: data.annualSalary,
+        annualSalaryGrowth: data.salaryGrowth,
+        currentRetirementSavings: data.retirementSavings,
+        monthlyRetirementContribution: data.monthlyContribution,
+        employerMatch: data.employerMatch
+      }
+    },
+    // PAGE 3: Financial Health Scorecard
+    {
+      page: 3,
+      title: "Financial Health Scorecard",
+      wintriceScore: data.wintriceScore,
+      scorecard: [
+        { category: "Savings Rate", score: data.savingsRateScore },
+        { category: "Debt Ratio", score: data.debtRatioScore },
+        { category: "Investment Allocation", score: data.investmentAllocScore },
+        { category: "Emergency Fund", score: data.emergencyFundScore },
+        { category: "Retirement Readiness", score: data.retirementReadinessScore }
+      ]
+    },
+    // PAGE 4: Net Worth Statement
+    {
+      page: 4,
+      title: "Net Worth Statement",
+      assets: data.assets,
+      totalAssets: data.assets ? data.assets.reduce((sum, a) => sum + a.value, 0) : 0,
+      liabilities: data.liabilities,
+      totalLiabilities: data.liabilities ? data.liabilities.reduce((sum, l) => sum + l.value, 0) : 0,
+      netWorth: data.netWorth
+    },
+    // PAGE 5: Cash Flow
+    {
+      page: 5,
+      title: "Cash Flow Analysis",
+      monthlyIncome: data.monthlyIncome,
+      monthlyExpenses: data.monthlyExpenses,
+      monthlySurplus: data.monthlySurplus,
+      // Could include expense breakdown if available
+    },
+    // PAGE 6: Emergency Fund
+    {
+      page: 6,
+      title: "Emergency Fund Adequacy",
+      monthlyCoreExpenses: data.monthlyCoreExpenses,
+      recommendedEFund: data.recommendedEFund,
+      liquidSavings: data.liquidSavings,
+      efundStatus: data.efundStatus
+    },
+    // PAGE 7: Debt Analysis
+    {
+      page: 7,
+      title: "Debt Analysis",
+      debtToIncomeRatio: data.dtiRatio,
+      studentLoanPayoffYears: data.loanPayoffYears,
+      mortgageYears: data.mortgageYears
+    },
+    // PAGE 8: Investment Allocation
+    {
+      page: 8,
+      title: "Current Investment Allocation",
+      allocation: data.allocation,
+      riskProfile: data.riskProfile
+    },
+    // PAGE 9: Risk Tolerance
+    {
+      page: 9,
+      title: "Risk Tolerance Assessment Summary",
+      riskCapacity: data.riskCapacity,
+      riskBehavior: data.riskBehavior,
+      portfolioAlignment: data.portfolioAlignment
+    },
+    // PAGE 10: Retirement Projection
+    {
+      page: 10,
+      title: "Retirement Projection (Base Case)",
+      retirementAge: data.retirementAge,
+      projectedPortfolio67: data.projectedPortfolio67,
+      estimatedAnnualRetIncome: data.estimatedAnnualRetIncome
+    },
+    // PAGE 11: Retirement Gap
+    {
+      page: 11,
+      title: "Retirement Income Gap Analysis",
+      projectedNeededIncome: data.targetRetirementIncome,
+      projectedIncome: data.estimatedAnnualRetIncome,
+      annualGap: data.retirementIncomeGap,
+      gapCoverage: data.gapCoverage
+    },
+    // PAGE 12: Savings Adjustment
+    {
+      page: 12,
+      title: "Required Savings Adjustment",
+      savingsIncrease: data.savingsIncrease,
+      delayRetirementYears: data.delayRetirementYears
+    },
+    // PAGE 13: Social Security
+    {
+      page: 13,
+      title: "Social Security Estimate",
+      ssa67: data.ssa67,
+      ssa70: data.ssa70,
+      breakEvenAge: data.breakEvenAge
+    },
+    // PAGE 14: Employer Plan
+    {
+      page: 14,
+      title: "Employer Plan Optimization",
+      currentContribution: data.currentContribution,
+      recommendedContribution: data.recommendedContribution,
+      employerMatchStatus: data.employerMatchStatus
+    },
+    // PAGE 15: Tax Optimization
+    {
+      page: 15,
+      title: "Tax Optimization Overview",
+      taxRate: data.taxRate,
+      traditionalPercent: data.traditionalPercent,
+      rothPercent: data.rothPercent,
+      lifetimeTaxSavings: data.lifetimeTaxSavings
+    },
+    // PAGE 16: Inflation Analysis
+    {
+      page: 16,
+      title: "Inflation Impact Analysis",
+      inflationRate: data.inflationRate,
+      salaryToday: data.salaryToday,
+      salaryFuture: data.salaryFuture,
+      yearsUntilRetirement: data.retirementAge - data.currentAge
+    },
+    // PAGE 17: Longevity Risk
+    {
+      page: 17,
+      title: "Longevity Risk Analysis",
+      chancePast90: data.chancePast90,
+      chancePast95: data.chancePast95,
+      portfolioLastsTo: data.portfolioLastsTo
+    },
+    // PAGE 18: Healthcare
+    {
+      page: 18,
+      title: "Healthcare Cost Projection",
+      healthcareAnnual: data.healthcareAnnual,
+      healthcareLifetime: data.healthcareLifetime
+    },
+    // PAGE 19: Insurance
+    {
+      page: 19,
+      title: "Insurance Coverage Review",
+      lifeInsurance: data.lifeInsurance,
+      recommendedInsurance: data.recommendedInsurance,
+      disabilityCoverage: data.disabilityCoverage,
+      insuranceGap: data.insuranceGap
+    },
+    // PAGE 20: College Planning
+    {
+      page: 20,
+      title: "College Planning",
+      dependents: data.children,
+      projectedCollegeCost: data.collegeCost,
+      savings529: data.savings529,
+      collegeGap: data.collegeGap
+    },
+    // PAGE 21: Scenario Analysis - Optimistic
+    {
+      page: 21,
+      title: "Scenario Analysis – Optimistic Market",
+      optimisticPortfolio: data.optimisticPortfolio,
+      optimisticReplacement: data.optimisticReplacement
+    },
+    // PAGE 22: Scenario Analysis - Conservative
+    {
+      page: 22,
+      title: "Scenario Analysis – Conservative Market",
+      conservativePortfolio: data.conservativePortfolio,
+      conservativeReplacement: data.conservativeReplacement,
+      stressTestResult: "Moderate Risk Exposure"
+    },
+    // PAGE 23: Action Plan
+    {
+      page: 23,
+      title: "Recommended Action Plan",
+      actionPlan: data.actionPlan
+    },
+    // PAGE 24: Roadmap
+    {
+      page: 24,
+      title: "12-Month Implementation Roadmap",
+      roadmap: data.roadmap
+    },
+    // PAGE 25: Disclosures
+    {
+      page: 25,
+      title: "Disclosures & Assumptions",
+      assumedReturn: data.assumedReturn,
+      inflation: data.inflationRate,
+      retirementAge: data.retireAge,
+      lifeExpectancy: data.lifeExp,
+      disclosures: [
+        "Social Security estimated based on current law",
+        "Projections are hypothetical and not guaranteed"
+      ],
+      footer: {
+        clientName: data.clientName,
+        employer: data.employer,
+        preparedBy: "AIFT Retirement Intelligence System"
+      }
+    }
+  ];
+  return jsonData;
+}
+
+/**
  * Controller for Express endpoint: streams custom WINTRICE PDF report.
  * For demonstration purposes, does not take actual user data input.
  */
@@ -374,6 +616,24 @@ async function generateReport(req, res) {
     res.status(500).json({
       success: false,
       error: 'Internal server error while generating financial report',
+      details: error.message
+    });
+  }
+}
+
+async function generateReportJSON(req, res) {
+  console.log('came here')
+  try {
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', 'attachment; filename=WINTRICE_Financial_Blueprint.json');
+
+    const json = financialReportJSON(req.body);
+    res.status(200).json(json);
+  } catch (error) {
+    console.error('Error generating financial report JSON:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error while generating financial report JSON',
       details: error.message
     });
   }
@@ -403,11 +663,5 @@ async function getReport(req, res) {
 export {
   generateReport,
   getReport,
-  // In a dynamic implementation, calculation/analysis helpers would be updated:
-  // generateFinancialReport,
-  // calculateRetirementGrowth,
-  // calculateSocialSecurity,
-  // calculateRetirementIncome,
-  // calculateCombinedIncome,
-  generateFinancialReportPDF
+  generateReportJSON
 };

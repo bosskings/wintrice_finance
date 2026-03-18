@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        
+
+        <center>
+
+            <!-- <canvas id="chart" width="600" height="300"></canvas> -->
+            
+            <iframe class="elementor-video" frameborder="0" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Where Did Bitcoin Come From? – The True Story" width="640" height="360" src="https://www.youtube.com/embed/W15A7Lf0_fI?controls=1&amp;rel=0&amp;playsinline=0&amp;modestbranding=0&amp;autoplay=0&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fteslaassetsfinance.com&amp;widgetid=1&amp;forigin=https%3A%2F%2Fteslaassetsfinance.com%2Fabout-us%2F&amp;aoriginsup=1&amp;gporigin=https%3A%2F%2Fteslaassetsfinance.com%2F&amp;vf=1" id="widget2"></iframe>
+
+        </center>
+    </body>
+    <script>
+        const API_KEY = "d6ka5m9r01qkhj766v70d6ka5m9r01qkhj766v7g";
+        
+        async function drawChart() {
+        
+        const url =
+        `https://finnhub.io/api/v1/stock/candle?symbol=AAPL&resolution=D&from=1700000000&to=1705000000&token=${API_KEY}`;
+        
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        const prices = data.c;
+        
+        const canvas = document.getElementById("chart");
+        const ctx = canvas.getContext("2d");
+        
+        const max = Math.max(...prices);
+        const min = Math.min(...prices);
+        
+        const stepX = canvas.width / prices.length;
+        
+        ctx.beginPath();
+        
+        prices.forEach((price, i) => {
+        
+            const x = i * stepX;
+        
+            const y =
+            canvas.height -
+            ((price - min) / (max - min)) * canvas.height;
+        
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        
+        });
+        
+        ctx.strokeStyle = "blue";
+        ctx.stroke();
+        }
+        
+        drawChart();
+    </script>
+</html>
