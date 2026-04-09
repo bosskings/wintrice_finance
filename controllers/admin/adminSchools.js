@@ -32,17 +32,6 @@ const updateSchool = async (req, res) => {
     }
 };
 
-const deleteSchool = async (req, res) => {
-    try {
-        const deletedSchool = await School.findByIdAndDelete(req.params.id);
-        if (!deletedSchool) {
-            return res.status(404).json({ status: "FAILED", message: "School not found." });
-        }
-        res.status(200).json({ status: "SUCCESS", message: 'School deleted successfully', data: deletedSchool });
-    } catch (error) {
-        res.status(500).json({ status: "FAILED", message: error.message });
-    }
-};
 
 const getSchoolById = async (req, res) => {
     try {
@@ -72,6 +61,5 @@ export {
     getAllSchools,
     createSchool,
     updateSchool,
-    deleteSchool,
     getSchoolById
 };

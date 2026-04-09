@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import financeRouter from "./routes/finance/financialReport.js"
+import adminRouter from "./routes/adminRouter.js";
 dotenv.config();
 
 
@@ -15,11 +16,14 @@ app.use(express.static('public'))
 
 
 app.use('/api/v1/fincanceRecord', financeRouter);
+app.use('/api/v1/admin', adminRouter)
+
+
 
 
 // test route
 app.get('/', (req, res)=>{
-    res.json({message:"all good"})
+    res.json({message:"all good on wintrice"})
 })
 
 

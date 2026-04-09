@@ -14,9 +14,12 @@ const schoolSchema = new mongoose.Schema({
     students: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Student'
-    }]
-
-    ,
+    }],
+    status: {
+        type: String,
+        enum: ['Active', 'Inactive'],
+        default: 'active'
+    },
     settings: {
         enrolmentPolicy: {
             type: [String], // e.g. ['open', 'by-invitation', ...]

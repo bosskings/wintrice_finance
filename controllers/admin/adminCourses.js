@@ -22,6 +22,9 @@ const getCoursesOverview = async (req, res) => {
 const getAllCourses = async (req, res) => {
     try {
         const courses = await Course.find();
+        if (!courses || courses.length === 0) {
+            return res.status(200).json({ status: "SUCCESS", message: "No courses yet", data: [] });
+        }
         res.status(200).json({ status: "SUCCESS", data: courses });
     } catch (error) {
         res.status(500).json({ status: "FAILED", message: error.message });

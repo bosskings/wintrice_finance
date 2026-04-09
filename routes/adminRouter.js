@@ -11,7 +11,6 @@ import {
   getAllSchools,
   createSchool,
   updateSchool,
-  deleteSchool,
   getSchoolById,
 } from '../controllers/admin/adminSchools.js';
 import {
@@ -25,11 +24,12 @@ import {
   getAllSupportTickets,
   updateSupportStatus,
 } from '../controllers/admin/support.js';
+import adminOverview from '../controllers/admin/adminHome.js';
 
 const adminRouter = express.Router();
 
 // Announcements
-adminRouter.post('/announcements', createAnnouncement);
+adminRouter.post('/createAnnouncements', createAnnouncement);
 
 // Courses
 adminRouter.get('/courses/overview', getCoursesOverview);
@@ -37,12 +37,14 @@ adminRouter.get('/courses', getAllCourses);
 adminRouter.get('/courses/:id', getCourseById);
 adminRouter.patch('/courses/:id/status', updateCourseStatus);
 
+// overview
+adminRouter.get('/overview', adminOverview);
+
 // Schools
 adminRouter.get('/schools', getAllSchools);
 adminRouter.post('/schools', createSchool);
 adminRouter.get('/schools/:id', getSchoolById);
 adminRouter.put('/schools/:id', updateSchool);
-adminRouter.delete('/schools/:id', deleteSchool);
 
 // Students
 adminRouter.get('/students/overview', getStudentsOverview);

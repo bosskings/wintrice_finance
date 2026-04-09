@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const announcementSchema = new mongoose.Schema({
     title: {
@@ -13,7 +13,7 @@ const announcementSchema = new mongoose.Schema({
     },
     target: {
         type: String,
-        enum: ['students', 'school'],
+        enum: ['Student', 'School'],
         required: true
     },
     createdAt: {
