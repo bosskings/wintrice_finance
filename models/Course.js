@@ -22,7 +22,7 @@ const courseSchema = new mongoose.Schema({
         required: false,
         trim: true
     },
-    code: {
+    courseCode: {
         type: String,
         required: true,
         trim: true

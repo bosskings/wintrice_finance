@@ -17,8 +17,8 @@ const schoolSchema = new mongoose.Schema({
     }],
     status: {
         type: String,
-        enum: ['Active', 'Inactive'],
-        default: 'active'
+        enum: ['ACTIVE', 'INACTIVE'],
+        default: 'ACTIVE'
     },
     settings: {
         enrolmentPolicy: {

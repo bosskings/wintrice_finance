@@ -1,11 +1,64 @@
 import School from '../../models/School.js';
 import Student from '../../models/Student.js';
 
+
+/**
+ * Get student overview: total students, active students, and % growth in the last month
+ */
+const getStudentOverview = async (req, res) => {
+    try {
+        const totalStudents = await Student.countDocuments();
+
+        const activeStudents = await Student.countDocuments({ status: "ACTIVE" });
+
+        // Dates for monthly growth calculation
+        const now = new Date();
+        const oneMonthAgo = new Date(now);
+        oneMonthAgo.setMonth(now.getMonth() - 1);
+
+        // Students registered in the last month
+        const newStudentsLastMonth = await Student.countDocuments({
+            createdAt: { $gte: oneMonthAgo, $lte: now }
+        });
+
+        // Students registered in the month before last
+        const twoMonthsAgo = new Date(now);
+        twoMonthsAgo.setMonth(now.getMonth() - 2);
+
+        const newStudentsPrevMonth = await Student.countDocuments({
+            createdAt: { $gte: twoMonthsAgo, $lt: oneMonthAgo }
+        });
+
+        // Calculate growth percentage
+        let percentGrowth = 0;
+        if (newStudentsPrevMonth === 0 && newStudentsLastMonth > 0) {
+            percentGrowth = 100;
+        } else if (newStudentsPrevMonth > 0) {
+            percentGrowth = ((newStudentsLastMonth - newStudentsPrevMonth) / newStudentsPrevMonth) * 100;
+            percentGrowth = Math.round(percentGrowth * 100) / 100;
+        }
+
+        res.status(200).json({
+            status: "SUCCESS",
+            data: {
+                totalStudents,
+                activeStudents,
+                percentGrowthLastMonth: percentGrowth
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ status: "FAILED", message: error.message });
+    }
+};
+
+
 // Controller function to get all schools
 const getAllSchools = async (req, res) => {
     try {
         const schools = await School.find();
-        res.status(200).json({ status: "SUCCESS", data: schools });
+        // Return each school as an individual object in an array of objects
+        const result = schools.map(school => ({ school }));
+        res.status(200).json({ status: "SUCCESS", data: result });
     } catch (error) {
         res.status(500).json({ status: "FAILED", message: error.message });
     }
@@ -40,13 +93,20 @@ const getSchoolById = async (req, res) => {
             return res.status(404).json({ status: "FAILED", message: "School not found." });
         }
 
-        const students = await Student.find({ school: req.params.id });
+        // Get total students and number of active students under this school
+        const totalStudents = await Student.countDocuments({ school: req.params.id });
+        const activeStudents = await Student.countDocuments({ school: req.params.id, status: 'ACTIVE' });
+
+        // Count total courses available under this school
+        const totalCourses = school.settings?.courses ? school.settings.courses.length : 0;
 
         res.status(200).json({
             status: "SUCCESS",
             data: {
                 school,
-                students
+                totalStudents,
+                activeStudents,
+                totalCourses
             }
         });
     } catch (error) {
@@ -58,6 +118,7 @@ const getSchoolById = async (req, res) => {
 
 
 export {
+    getStudentOverview,
     getAllSchools,
     createSchool,
     updateSchool,

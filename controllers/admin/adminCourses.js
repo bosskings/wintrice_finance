@@ -53,9 +53,44 @@ const updateCourseStatus = async (req, res) => {
         res.status(500).json({ status: "FAILED", message: error.message });
     }
 };
+
+
+const createCourse = async (req, res) => {
+    try {
+        const {
+            title,
+            category,
+            courseCode,
+            duration,
+            gradeLevel,
+            description
+        } = req.body;
+
+        // Validate required fields
+        if (!title || !category || !courseCode || !duration || !gradeLevel || !description) {
+            return res.status(400).json({ status: "FAILED", message: "Please provide all required fields." });
+        }
+
+        // Create new course object
+        const newCourse = await Course.create({
+            title,
+            category,
+            courseCode,
+            duration,
+            gradeLevel,
+            description
+        });
+
+        res.status(201).json({ status: "SUCCESS", data: newCourse });
+    } catch (error) {
+        res.status(500).json({ status: "FAILED", message: error.message });
+    }
+};
+
 export { 
     getCoursesOverview,
     getAllCourses,
     getCourseById,
-    updateCourseStatus
+    updateCourseStatus,
+    createCourse
 };

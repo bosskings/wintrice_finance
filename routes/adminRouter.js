@@ -2,27 +2,29 @@ import express from 'express';
 
 import { createAnnouncement } from '../controllers/admin/adminAnnouncement.js';
 import {
-  getCoursesOverview,
-  getAllCourses,
-  getCourseById,
-  updateCourseStatus,
+    getCoursesOverview,
+    getAllCourses,
+    getCourseById,
+    updateCourseStatus,
+    createCourse,
 } from '../controllers/admin/adminCourses.js';
 import {
-  getAllSchools,
-  createSchool,
-  updateSchool,
-  getSchoolById,
+    getStudentOverview,
+    getAllSchools,
+    createSchool,
+    updateSchool,
+    getSchoolById,
 } from '../controllers/admin/adminSchools.js';
 import {
-  getStudentsOverview,
-  getAllStudents,
-  getStudentById,
-  updateStudentStatus,
+    getStudentsOverview,
+    getAllStudents,
+    getStudentById,
+    updateStudentStatus,
 } from '../controllers/admin/adminStudents.js';
 import {
-  getSupportOverview,
-  getAllSupportTickets,
-  updateSupportStatus,
+    getSupportOverview,
+    getAllSupportTickets,
+    updateSupportStatus,
 } from '../controllers/admin/support.js';
 import adminOverview from '../controllers/admin/adminHome.js';
 
@@ -34,6 +36,7 @@ adminRouter.post('/createAnnouncements', createAnnouncement);
 // Courses
 adminRouter.get('/courses/overview', getCoursesOverview);
 adminRouter.get('/courses', getAllCourses);
+adminRouter.post('/courses', createCourse);
 adminRouter.get('/courses/:id', getCourseById);
 adminRouter.patch('/courses/:id/status', updateCourseStatus);
 
@@ -41,6 +44,7 @@ adminRouter.patch('/courses/:id/status', updateCourseStatus);
 adminRouter.get('/overview', adminOverview);
 
 // Schools
+adminRouter.get('/schools/overview', getStudentOverview);
 adminRouter.get('/schools', getAllSchools);
 adminRouter.post('/schools', createSchool);
 adminRouter.get('/schools/:id', getSchoolById);
