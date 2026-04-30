@@ -5,7 +5,8 @@ import {
     schoolOverview, 
     getAllStudents, 
     getStudentById, 
-    getQuizStatsForSchool 
+    getQuizStatsForSchool, 
+    addNewStudent
 } from "../controllers/schools/students.js";
 import { 
     updateSchoolProfile, 
@@ -27,6 +28,7 @@ schoolsRouter.use(requireAuth);
 // Students endpoints
 schoolsRouter.get('/overview', schoolOverview);
 schoolsRouter.get('/students', getAllStudents);
+schoolsRouter.post('/students', addNewStudent)
 schoolsRouter.get('/students/:id', getStudentById);
 schoolsRouter.get('/quizzes/stats', getQuizStatsForSchool);
 

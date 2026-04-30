@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 export const adminLogin = async (req, res) => {
     const { loginID, password } = req.body;
 
-    const CORRECT_LOGIN_ID = "Wintrice@admin.access";
-    const CORRECT_PASSWORD = "Wintrice@Admin#001";
+    const CORRECT_LOGIN_ID = process.env.ADMIN_LOGIN_ID;
+    const CORRECT_PASSWORD = process.env.ADMIN_LOGIN_PASS;
 
     if (loginID !== CORRECT_LOGIN_ID || password !== CORRECT_PASSWORD) {
         return res.status(401).json({

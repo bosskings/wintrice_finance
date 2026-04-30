@@ -60,7 +60,7 @@ adminRouter.get('/schools/overview', getStudentOverview);
 adminRouter.get('/schools', getAllSchools);
 adminRouter.post('/schools', upload.fields([{ name: 'image', maxCount: 1 }]), createSchool);
 adminRouter.get('/schools/:id', getSchoolById);
-adminRouter.put('/schools/:id', updateSchool);
+adminRouter.put('/schools/:id', upload.fields([{ name: 'image', maxCount: 1 }]), updateSchool);
 
 // Students
 adminRouter.get('/students/overview', getStudentsOverview);

@@ -80,7 +80,6 @@ const createSchool = async (req, res) => {
             },
         });
         
-
         // Verify file input
         if (!req.files || !req.files.image || !req.files.image[0]) {
             return res.status(400).json({ status: "FAILED", message: "No image file uploaded." });
@@ -89,12 +88,10 @@ const createSchool = async (req, res) => {
         if (!imageFile.buffer) {
             return res.status(400).json({ status: "FAILED", message: "Invalid image file: no buffer." });
         }
-
         // Convert image to webp
         const webpBuffer = await sharp(imageFile.buffer).webp().toBuffer();
-        // Generate unique filename
-        const key = `${Date.now()}.webp`;
 
+        const key = `${Date.now()}.webp`;
         const command = new PutObjectCommand({
             Bucket: "wintrice-images",
             Key: key,
@@ -106,16 +103,12 @@ const createSchool = async (req, res) => {
         await s3.send(command);
 
         const imageUrl = `https://wintrice.com/${key}`;
-
-        
         const newSchoolData = {
             ...req.body,
-            url: imageUrl
+            schoolLogo: imageUrl
         };
-
-        // const school = await School.create(newSchoolData);
-
-        res.status(201).json({ status: "SUCCESS", data: newSchoolData });
+        const school = await School.create(newSchoolData);
+        res.status(201).json({ status: "SUCCESS", data: school });
     } catch (error) {
         res.status(500).json({ status: "FAILED", message: error.message });
         console.error(error.message);
@@ -124,13 +117,52 @@ const createSchool = async (req, res) => {
 
 const updateSchool = async (req, res) => {
     try {
-        const school = await School.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        let updatedData = { ...req.body };
+        let imageUrl;
+
+        // If there is an image file (via multer or similar middleware)
+        if (req.files && req.files.image && req.files.image[0] && req.files.image[0].buffer) {
+            
+            // S3 (R2) client setup (just like createSchool)
+            const s3 = new S3Client({
+                region: "auto",
+                endpoint: `https://${process.env.CF_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+                credentials: {
+                    accessKeyId: process.env.R2_ACCESS_KEY,
+                    secretAccessKey: process.env.R2_SECRET_KEY,
+                },
+            });
+
+            const imageFile = req.files.image[0];
+            // Convert image to webp format before uploading
+            const webpBuffer = await sharp(imageFile.buffer).webp().toBuffer();
+
+            const key = `${Date.now()}.webp`;
+            const command = new PutObjectCommand({
+                Bucket: "wintrice-images",
+                Key: key,
+                Body: webpBuffer,
+                ContentType: "image/webp",
+                ACL: "public-read"
+            });
+
+            await s3.send(command);
+
+            imageUrl = `https://wintrice.com/${key}`;
+            updatedData.schoolLogo = imageUrl;
+        }
+
+        // Update the school with ALL provided fields, possibly including the new `schoolLogo`
+        const school = await School.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+
         if (!school) {
             return res.status(404).json({ status: "FAILED", message: "School not found." });
         }
-        res.status(200).json({ status: "SUCCESS", data: school, details: req.body });
+
+        res.status(200).json({ status: "SUCCESS", data: school });
     } catch (error) {
         res.status(500).json({ status: "FAILED", message: error.message });
+        console.error(error.message);
     }
 };
 

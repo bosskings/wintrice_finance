@@ -1,6 +1,7 @@
 import Quiz from "../../models/Quiz.js";
 import School from '../../models/School.js';
 import Student from '../../models/Student.js';
+import nodemailer from "nodemailer"
 
 const schoolOverview = async(req, res) =>{
 
@@ -59,6 +60,90 @@ const getAllStudents = async (req, res) => {
 
 
 
+
+/**
+ * function to create new student from a schools dashboard
+*/
+const generateRandomPassword = (length = 8) => {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let pwd = '';
+    for (let i = 0; i < length; ++i) {
+        pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return pwd;
+};
+
+const addNewStudent = async (req, res) => {
+    try {
+        const { email, grade } = req.body;
+        const schoolId = req.schoolId;
+
+        if (!email || !grade) {
+            return res.status(400).json({
+                status: "FAILED",
+                message: "Email and grade are required"
+            });
+        }
+
+        // Check if already exists
+        const existing = await Student.findOne({ email, school: schoolId });
+        if (existing) {
+            return res.status(409).json({
+                status: "FAILED",
+                message: "A student with this email already exists for this school"
+            });
+        }
+
+        // Generate password
+        const password = generateRandomPassword();
+
+        // Create student
+        const student = new Student({
+            email,
+            grade,
+            password,
+            school: schoolId,
+            status: 'ACTIVE'
+        });
+
+        await student.save();
+
+        // Setup nodemailer
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER, // set in your env
+                pass: process.env.EMAIL_PASS
+            }
+        });
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Your Wintrice Student Account Created',
+            text: `Your account has been created, view your login details below:\n\nEmail: ${email}\nPassword: ${password}\n\nPlease login and change your password.`
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(201).json({
+            status: "SUCCESS",
+            message: "Student account created and login details sent to email."
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            status: "FAILED",
+            message: "Could not add student.",
+            error: error.message
+        });
+    }
+};
+
+
+/**
+ * function to get single student details with input ID in the req.param 
+ */
 const getStudentById = async (req, res) => {
     try {
         const schoolId = req.schoolId;
@@ -173,6 +258,7 @@ const getQuizStatsForSchool = async (req, res) => {
 export {
     schoolOverview,
     getAllStudents,
+    addNewStudent,
     getStudentById,
     getQuizStatsForSchool
 }
