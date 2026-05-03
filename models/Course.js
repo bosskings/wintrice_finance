@@ -52,7 +52,7 @@ const courseSchema = new mongoose.Schema({
     ],
     category: {
         type: String,
-        enum: ['finance', 'investing', 'intro', 'basics', 'accounting'],
+        enum: ['FINANCE', 'INVESTING', 'INTRO', 'BASICS', 'ACCOUNTING'],
         required: true
     },
     description: {

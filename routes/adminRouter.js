@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 
-import { createAnnouncement } from '../controllers/admin/adminAnnouncement.js';
+import { createAnnouncement, getAllAnnouncements } from '../controllers/admin/adminAnnouncement.js';
 import {
     getCoursesOverview,
     getAllCourses,
@@ -30,6 +30,7 @@ import {
 import adminOverview from '../controllers/admin/adminHome.js';
 import adminLogin from '../controllers/admin/adminAuth.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
+import { createQuiz } from '../controllers/admin/adminQuiz.js';
 
 const adminRouter = express.Router();
 
@@ -44,6 +45,7 @@ adminRouter.use(requireAuth);
 
 // Announcements
 adminRouter.post('/createAnnouncements', createAnnouncement);
+adminRouter.get('/announcements', getAllAnnouncements);
 
 // Courses
 adminRouter.get('/courses/overview', getCoursesOverview);
@@ -73,5 +75,8 @@ adminRouter.get('/support/overview', getSupportOverview);
 adminRouter.get('/support', getAllSupportTickets);
 adminRouter.get('/support/:id', getAllSupportTickets);
 adminRouter.patch('/support/:id/status', updateSupportStatus);
+
+// quiz 
+adminRouter.post('/quiz', createQuiz)
 
 export default adminRouter;

@@ -23,10 +23,20 @@ const studentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'School'
   },
+
   courses: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course'
+    course: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Course',
+      required: true
+    },
+    status: {
+      type: String,
+      enum: ['COMPLETE', 'ONGOING'],
+      default: 'ONGOING'
+    }
   }],
+
   status: {
     type: String,
     enum: ['ACTIVE', 'INACTIVE', 'PENDING'],

@@ -68,7 +68,6 @@ const getAllSchools = async (req, res) => {
 
 
 const createSchool = async (req, res) => {
-    
     try {
         // Fix credential error: use 'AWS' keys for the credentials object
         const s3 = new S3Client({
@@ -103,9 +102,15 @@ const createSchool = async (req, res) => {
         await s3.send(command);
 
         const imageUrl = `https://wintrice.com/${key}`;
+
+        // Generate random 6 digit int for accessId with prefix WIN-SCH
+        const randomNum = Math.floor(100000 + Math.random() * 900000);
+        const accessId = `WIN-SCH${randomNum}`;
+
         const newSchoolData = {
             ...req.body,
-            schoolLogo: imageUrl
+            schoolLogo: imageUrl,
+            accessId: accessId
         };
         const school = await School.create(newSchoolData);
         res.status(201).json({ status: "SUCCESS", data: school });

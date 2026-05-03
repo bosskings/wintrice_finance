@@ -7,6 +7,12 @@ const quizSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    timeInMinutes: {
+        type: Number,
+        required: false,
+        default:30
+    },
+    
     questions: [
         {
             question: {

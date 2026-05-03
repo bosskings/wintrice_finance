@@ -25,4 +25,14 @@ const createAnnouncement = async (req, res) => {
     }
 };
 
-export { createAnnouncement };
+// Controller function to get all announcements
+const getAllAnnouncements = async (req, res) => {
+    try {
+        const announcements = await Announcement.find().sort({ createdAt: -1 });
+        res.status(200).json({ status: "SUCCESS", data: announcements });
+    } catch (error) {
+        res.status(500).json({ status: "FAILED", message: error.message });
+    }
+};
+
+export { createAnnouncement, getAllAnnouncements };

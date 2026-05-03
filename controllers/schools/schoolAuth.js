@@ -5,15 +5,15 @@ import sendEmail from "../../utils/sendEmail.js";
 
 const verifySchool = async (req, res) => {
     try {
-        const { accessId } = req.body;
-        if (!accessId) {
+        const { email } = req.body;
+        if (!email) {
             return res.status(400).json({ 
                 status: "FAILED", 
-                message: "Access ID is required." 
+                message: "Email is required." 
             });
         }
         // Find the school using accessId
-        const school = await Schools.findOne({ accessId });
+        const school = await Schools.findOne({ email });
         if (!school) {
             return res.status(404).json({ status: "FAILED", message: "School not found." });
         }
