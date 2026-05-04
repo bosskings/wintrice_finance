@@ -21,16 +21,36 @@ const verifySchool = async (req, res) => {
         // Generate random 6 digit code
         const authCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-        // Send email with the code
+        // Send a visually-appealing authentication code email like adminSchools.js
+        const emailHtml = `
+            <div style="background-color: #1E90FF; color: #fff; padding: 24px; font-family: Arial, sans-serif; border-radius: 8px;">
+                <div style="background-color: #fff; color: #1E90FF; padding: 24px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(30,144,255,0.12);">
+                    <h1 style="color: #1E90FF; margin-bottom: 16px;">Wintrice Authentication Code</h1>
+                    <p style="font-size: 18px; color: #1E90FF;">
+                        Please use the following authentication code to proceed with your login.
+                    </p>
+                    <p style="margin: 24px 0 8px 0; color: #1E90FF;">
+                        <strong>Your Authentication Code:</strong>
+                    </p>
+                    <div style="font-size: 26px; font-weight: bold; letter-spacing: 2px; background: #1E90FF; color: #fff; padding: 16px 32px; border-radius: 8px; display: inline-block;">
+                        ${authCode}
+                    </div>
+                    <p style="margin: 24px 0 0 0; color: #1E90FF;">
+                        This code expires soon. Do not share it with anyone.
+                    </p>
+                </div>
+            </div>
+        `;
         try {
             await sendEmail(
                 school.email,
-                "Wintrice Authentication",
-                `Your authentication code is: <b>${authCode}</b>`
+                "Wintrice Authentication Code",
+                emailHtml
             );
         } catch (emailError) {
             return res.status(500).json({ status: "FAILED", message: "Failed to send authentication email." });
         }
+
 
         // Save authCode to the school record
         school.authCode = authCode;

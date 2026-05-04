@@ -1,7 +1,9 @@
 import express from 'express';
-import { studentsLogin } from '../controllers/students/studentsAuth';
-import studentsOverview from '../controllers/students/studentsOverview';
-import { coursesOverview, viewCourse } from '../controllers/students/studentsCourses';
+import { studentsLogin } from '../controllers/students/studentsAuth.js';
+import studentsOverview from '../controllers/students/studentsOverview.js';
+import { coursesOverview, viewCourse } from '../controllers/students/studentsCourses.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
+
 
 const studentsRouter = express.Router();
 

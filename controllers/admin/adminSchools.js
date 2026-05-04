@@ -1,3 +1,4 @@
+import sendEmail from '../../utils/sendEmail.js';
 import School from '../../models/School.js';
 import Student from '../../models/Student.js';
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
@@ -80,10 +81,12 @@ const createSchool = async (req, res) => {
         });
         
         // Verify file input
-        if (!req.files || !req.files.image || !req.files.image[0]) {
+        if (!req.file) {
             return res.status(400).json({ status: "FAILED", message: "No image file uploaded." });
         }
-        const imageFile = req.files.image[0];
+
+        
+        const imageFile = req.file;
         if (!imageFile.buffer) {
             return res.status(400).json({ status: "FAILED", message: "Invalid image file: no buffer." });
         }
@@ -106,6 +109,34 @@ const createSchool = async (req, res) => {
         // Generate random 6 digit int for accessId with prefix WIN-SCH
         const randomNum = Math.floor(100000 + Math.random() * 900000);
         const accessId = `WIN-SCH${randomNum}`;
+
+        // Prepare email content and send notification to new school
+
+        const toEmail = req.body.email;
+        const emailSubject = "Welcome to Wintrice E-Learning: School Registration Success";
+        const emailHtml = `
+            <div style="background-color: #1E90FF; color: #fff; padding: 24px; font-family: Arial, sans-serif; border-radius: 8px;">
+                <div style="background-color: #fff; color: #1E90FF; padding: 24px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(30,144,255,0.12);">
+                    <h1 style="color: #1E90FF; margin-bottom: 16px;">Welcome to Wintrice E-learning!</h1>
+                    <p style="font-size: 18px; color: #1E90FF;">
+                        You have been <strong>registered as a school</strong> under Wintrice E-learning.
+                    </p>
+                    <p style="margin: 24px 0 8px 0; color: #1E90FF;">
+                        <strong>Your AccessID:</strong>
+                    </p>
+                    <div style="font-size: 26px; font-weight: bold; letter-spacing: 2px; background: #1E90FF; color: #fff; padding: 16px 32px; border-radius: 8px; display: inline-block;">
+                        ${accessId}
+                    </div>
+                    <p style="margin: 24px 0 0 0; color: #1E90FF;">
+                        You will require this AccessID each time you login.
+                    </p>
+                </div>
+            </div>
+        `;
+        if (toEmail) {
+            await sendEmail(toEmail, emailSubject, emailHtml);
+        }
+
 
         const newSchoolData = {
             ...req.body,

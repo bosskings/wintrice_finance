@@ -5,6 +5,8 @@ import express from "express";
 import cors from "cors";
 import financeRouter from "./routes/finance/financialReport.js"
 import adminRouter from "./routes/adminRouter.js";
+import schoolsRouter from "./routes/shoolsRouter.js";
+import studentsRouter from "./routes/studentsRouter.js";
 
 const app = express()
 
@@ -13,7 +15,10 @@ app.use(cors())
 app.use(express.static('public'))
 
 app.use('/api/v1/fincanceRecord', financeRouter);
-app.use('/api/v1/admin', adminRouter)
+app.use('/api/v1/admin', adminRouter);
+app.use('/api/v1/school', schoolsRouter);
+app.use('/api/v1/student', studentsRouter);
+
 
 // test route
 app.get('/', (req, res)=>{

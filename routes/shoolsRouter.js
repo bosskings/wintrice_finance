@@ -1,5 +1,5 @@
 import express from "express";
-import { requireAuth } from "../middleware/authMiddleware";
+import { requireAuth } from "../middleware/authMiddleware.js";
 import { verifySchool, login } from "../controllers/schools/schoolAuth.js";
 import { 
     schoolOverview, 

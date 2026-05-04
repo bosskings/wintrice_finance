@@ -1,5 +1,3 @@
-import Students from '../../models/Students.js';
-
 import Student from '../../models/Student.js';
 import Course from '../../models/Course.js';
 
