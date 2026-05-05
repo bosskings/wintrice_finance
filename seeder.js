@@ -24,42 +24,49 @@ function generateFakeQuestion() {
   };
 }
 
-// Helper to create fake students per quiz
+// Helper to create a fake quiz participant (student)
 function generateFakeQuizStudent(studentId) {
+  // Simulate random completion
+  const isComplete = faker.datatype.boolean();
+  // 50% chance to assign a completion time (in seconds), only if complete
+  const completionTime = isComplete
+    ? faker.number.int({ min: 60, max: QUESTIONS_PER_QUIZ * 60 }) // e.g., 1min-question to 1min/q x n
+    : undefined;
   return {
     studentId,
-    score: faker.number.int({ min: 0, max: QUESTIONS_PER_QUIZ })
+    score: faker.number.int({ min: 0, max: QUESTIONS_PER_QUIZ }),
+    completionTime,
+    complete: isComplete
   };
 }
 
-// Main seeder function
-async function seed() {
+// Quiz seeder function
+async function seedQuiz() {
   try {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("Connected to MongoDB");
 
-    // Clean Quiz collection
+    // Clean out quiz collection
     await Quiz.deleteMany({});
     console.log("Cleared existing quizzes.");
 
-    // Make a fake pool of student ObjectIds for reference
-    const fakeStudentIds = Array(STUDENT_IDS_POOL_SIZE)
-      .fill(0)
-      .map(() => new mongoose.Types.ObjectId());
+    // Simulate a pool of fake student ObjectIds
+    const fakeStudentIds = Array.from({ length: STUDENT_IDS_POOL_SIZE }, () =>
+      new mongoose.Types.ObjectId()
+    );
 
     const quizzes = [];
 
     for (let i = 0; i < FAKE_QUIZ_COUNT; ++i) {
-      const questions = Array(QUESTIONS_PER_QUIZ)
-        .fill(0)
-        .map(() => generateFakeQuestion());
+      const questions = Array.from({ length: QUESTIONS_PER_QUIZ }, generateFakeQuestion);
 
-      // Randomly select unique students for this quiz
+      // Select unique students for this quiz
       const quizStudentIds = faker.helpers.arrayElements(fakeStudentIds, { min: STUDENTS_PER_QUIZ, max: STUDENTS_PER_QUIZ });
       const students = quizStudentIds.map(id => generateFakeQuizStudent(id));
 
       quizzes.push({
         title: faker.company.catchPhrase() + " Quiz",
+        timeInMinutes: faker.number.int({ min: 20, max: 90 }),
         questions,
         students,
         dateWritten: faker.date.recent({ days: 365 })
@@ -79,4 +86,4 @@ async function seed() {
   }
 }
 
-seed();
+seedQuiz();

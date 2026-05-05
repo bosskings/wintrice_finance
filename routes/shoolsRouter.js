@@ -33,6 +33,8 @@ schoolsRouter.get('/overview', schoolOverview);
 schoolsRouter.get('/students', getAllStudents);
 schoolsRouter.post('/students', addNewStudent)
 schoolsRouter.get('/students/:id', getStudentById);
+
+// Quizzes endpoints
 schoolsRouter.get('/quizzes/stats', getQuizStatsForSchool);
 
 // School profile/settings endpoints

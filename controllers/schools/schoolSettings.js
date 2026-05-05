@@ -7,7 +7,10 @@ import sharp from "sharp";
 
 const updateSchoolProfile = async (req, res) => {
     try {
-        const { schoolId, ...updateFields } = req.body;
+        // Get schoolId from req (e.g., set in middleware/authentication)
+        const schoolId = req.schoolId;
+        // Everything else from req.body
+        const updateFields = { ...req.body };
 
         if (!schoolId) {
             return res.status(400).json({ error: 'schoolId is required.' });
