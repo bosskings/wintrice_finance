@@ -92,7 +92,6 @@ adminRouter.post('/quiz', createQuiz)
 adminRouter.get('/quiz', getAllQuizzes)
 adminRouter.get('/quiz/:id', getQuizById)
 adminRouter.put('/quiz/:id', updateQuiz)
-adminRouter.delete('/quiz/:id', deleteQuiz)
 
 
 export default adminRouter;

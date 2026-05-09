@@ -62,7 +62,17 @@ const quizSchema = new mongoose.Schema({
     dateWritten: {
         type: Date,
         default: Date.now
-    }
+    },
+
+    status: {
+        type: String,
+        enum: ['ACTIVE', 'INACTIVE'],
+        default: 'ACTIVE'
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
 
 });
 export default mongoose.model('Quiz', quizSchema);
