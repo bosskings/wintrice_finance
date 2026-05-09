@@ -30,7 +30,11 @@ import {
 import adminOverview from '../controllers/admin/adminHome.js';
 import adminLogin from '../controllers/admin/adminAuth.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
-import { createQuiz } from '../controllers/admin/adminQuiz.js';
+import { createQuiz,
+    getAllQuizzes,
+    getQuizById,
+    updateQuiz,
+    deleteQuiz } from '../controllers/admin/adminQuiz.js';
 
 const adminRouter = express.Router();
 
@@ -85,5 +89,10 @@ adminRouter.patch('/support/:id/status', updateSupportStatus);
 
 // quiz 
 adminRouter.post('/quiz', createQuiz)
+adminRouter.get('/quiz', getAllQuizzes)
+adminRouter.get('/quiz/:id', getQuizById)
+adminRouter.put('/quiz/:id', updateQuiz)
+adminRouter.delete('/quiz/:id', deleteQuiz)
+
 
 export default adminRouter;
