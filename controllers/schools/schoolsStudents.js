@@ -76,7 +76,7 @@ const generateRandomPassword = (length = 8) => {
 
 const addNewStudent = async (req, res) => {
     try {
-        const { email, grade, age, name } = req.body;
+        const { email, grade, dob, name } = req.body;
         const schoolId = req.schoolId;
 
         if (!email || !grade) {
