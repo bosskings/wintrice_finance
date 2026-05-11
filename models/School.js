@@ -47,7 +47,7 @@ const schoolSchema = new mongoose.Schema({
     },
     colorTheme: {
         type: String,
-        enum: ['black', 'blue'],
+        enum: ['black', 'red'],
         default: 'blue'
     },
     settings: {
