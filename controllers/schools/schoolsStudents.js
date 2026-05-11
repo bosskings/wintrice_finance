@@ -105,7 +105,7 @@ const addNewStudent = async (req, res) => {
             email,
             grade,
             name,
-            age,
+            dob,
             password: hashedPassword,
             school: schoolId,
             status: 'ACTIVE'
