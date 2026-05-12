@@ -19,7 +19,7 @@ const studentSchema = new mongoose.Schema({
   grade: {
     type: Number,
     required: true,
-    default:5
+    enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
   },
   enrolled: {
     type: Boolean,
