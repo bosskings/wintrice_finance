@@ -113,6 +113,12 @@ const addNewStudent = async (req, res) => {
 
         await student.save();
 
+        // Update the school's logged-in document with this student's ID
+        // (Assuming School model exists and has a "students" array. Change as appropriate per your schema.)
+        await School.findByIdAndUpdate( schoolId,
+            { $addToSet: { students: student._id } } // Add only if not present
+        );
+
         // Prepare email content and send notification to new student
         const toEmail = email;
         const emailSubject = "Your Wintrice Student Account Created";
