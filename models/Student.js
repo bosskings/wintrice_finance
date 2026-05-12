@@ -16,6 +16,11 @@ const studentSchema = new mongoose.Schema({
     unique: true,
     match: [/\S+@\S+\.\S+/, "Please enter a valid email address"]
   },
+
+  picture: {
+    type: String,
+    default: "https://wintrice.com/avatar.jpeg"
+  },
   grade: {
     type: Number,
     required: true,
