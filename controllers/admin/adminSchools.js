@@ -205,14 +205,27 @@ const updateSchool = async (req, res) => {
 
 const getSchoolById = async (req, res) => {
     try {
-        const school = await School.findById(req.params.id);
+        const school = await School.findById(req.params.id).lean();
         if (!school) {
             return res.status(404).json({ status: "FAILED", message: "School not found." });
         }
 
+        // Get all student details for this school
+        // Using the reference ids in the "students" array, but also fallback to querying by school in Student model,
+        // in case array is outdated or not populated.
+        let studentsDetails = [];
+        if (Array.isArray(school.students) && school.students.length > 0) {
+            studentsDetails = await Student.find({
+                _id: { $in: school.students }
+            }).lean();
+        } else {
+            // fallback: query all students with this school id
+            studentsDetails = await Student.find({ school: school._id }).lean();
+        }
+
         // Get total students and number of active students under this school
-        const totalStudents = await Student.countDocuments({ school: req.params.id });
-        const activeStudents = await Student.countDocuments({ school: req.params.id, status: 'ACTIVE' });
+        const totalStudents = studentsDetails.length;
+        const activeStudents = studentsDetails.filter(stu => (stu.status === 'ACTIVE')).length;
 
         // Count total courses available under this school
         const totalCourses = school.settings?.courses ? school.settings.courses.length : 0;
@@ -223,7 +236,8 @@ const getSchoolById = async (req, res) => {
                 school,
                 totalStudents,
                 activeStudents,
-                totalCourses
+                totalCourses,
+                students: studentsDetails
             }
         });
     } catch (error) {
