@@ -100,6 +100,7 @@ const getAvailableCourses = async (req, res) => {
             status: "SUCCESS",
             courses: courses.map(c => ({
                 id: c._id,
+                title: c.title,
                 name: c.name,
                 courseCode: c.courseCode,
                 gradeLevel: c.gradeLevel,
