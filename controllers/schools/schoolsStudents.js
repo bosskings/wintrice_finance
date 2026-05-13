@@ -7,7 +7,7 @@ import sendEmail from '../../utils/sendEmail.js';
 const schoolOverview = async(req, res) =>{
 
     try {
-        const schoolId = req.schoolId;
+        const schoolId = req.user.id;
 
         // Total students in this school
         const totalStudents = await Student.countDocuments({ school: schoolId });
