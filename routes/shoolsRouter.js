@@ -29,8 +29,6 @@ const upload = multer({ storage });
 schoolsRouter.post('/verify', verifySchool);
 schoolsRouter.post('/login', login);
 
-schoolsRouter.get('/courses', allCourses)
-schoolsRouter.get('/quizzes', getAllQuizzes)
 
 // Apply authentication middleware for subsequent routes
 schoolsRouter.use(requireAuth);
@@ -44,6 +42,8 @@ schoolsRouter.put('/students/:id', updateStudent);
 
 // Quizzes endpoints
 schoolsRouter.get('/quizzes/stats', getQuizStatsForSchool);
+schoolsRouter.get('/courses', allCourses)
+schoolsRouter.get('/quizzes', getAllQuizzes)
 
 // School profile/settings endpoints
 schoolsRouter.put('/profile', upload.single('image'), updateSchoolProfile);
