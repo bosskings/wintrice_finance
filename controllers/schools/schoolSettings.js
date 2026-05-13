@@ -65,7 +65,7 @@ const updateSchoolProfile = async (req, res) => {
         }
 
         // Only allow updating certain top-level and nested fields for security
-        const allowedFields = ['name', 'address', 'schoolLogo', 'colorTheme', 'settings'];
+        const allowedFields = ['name', 'address', 'schoolLogo', 'colorTheme', 'settings', 'description', 'phone'];
         const updates = {};
 
         allowedFields.forEach(field => {
