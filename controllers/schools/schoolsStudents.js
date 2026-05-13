@@ -171,7 +171,7 @@ const addNewStudent = async (req, res) => {
  */
 const getStudentById = async (req, res) => {
     try {
-        const schoolId = req.schoolId;
+        const schoolId = req.user.id;
         const { id } = req.params;
 
         // Find the student by id and make sure they belong to the requesting school
