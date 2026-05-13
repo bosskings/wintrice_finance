@@ -4,6 +4,44 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import sharp from "sharp";
 
 
+// Function to return all details of the logged-in school
+const getSchoolDetails = async (req, res) => {
+    try {
+        // School ID from req.user, based on auth middleware
+        const schoolId = req.user && (req.user._id || req.user.id);
+        if (!schoolId) {
+            return res.status(401).json({
+                status: "FAILED",
+                message: "School ID not found in request user context."
+            });
+        }
+
+        // Fetch the school from DB
+        const school = await School.findById(schoolId).lean();
+        if (!school) {
+            return res.status(404).json({
+                status: "FAILED",
+                message: "School not found."
+            });
+        }
+
+        // Optionally exclude sensitive fields (like password, authCode)
+        const { password, authCode, ...schoolData } = school;
+
+        return res.status(200).json({
+            status: "SUCCESS",
+            school: schoolData
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: "FAILED",
+            message: "Failed to fetch school details.",
+            details: error.message
+        });
+    }
+};
+
+
 
 const updateSchoolProfile = async (req, res) => {
     try {
@@ -227,5 +265,6 @@ export {
     updateSchoolProfile,
     sendAndUpdateAuthCode,
     updateSchoolEmail,
+    getSchoolDetails,
     updateSchoolPassword
 }

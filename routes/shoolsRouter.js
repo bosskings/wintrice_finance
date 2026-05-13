@@ -14,7 +14,8 @@ import {
     updateSchoolProfile, 
     updateSchoolEmail, 
     updateSchoolPassword, 
-    sendAndUpdateAuthCode
+    sendAndUpdateAuthCode,
+    getSchoolDetails
 } from "../controllers/schools/schoolSettings.js";
 import { allCourses } from "../controllers/schools/extras.js";
 import { getAllQuizzes } from "../controllers/admin/adminQuiz.js";
@@ -46,6 +47,7 @@ schoolsRouter.get('/courses', allCourses)
 schoolsRouter.get('/quizzes', getAllQuizzes)
 
 // School profile/settings endpoints
+schoolsRouter.get('/profile', getSchoolDetails);
 schoolsRouter.put('/profile', upload.single('image'), updateSchoolProfile);
 schoolsRouter.post('/profile/email/auth-code', sendAndUpdateAuthCode);
 schoolsRouter.put('/profile/email', updateSchoolEmail);
