@@ -16,6 +16,8 @@ import {
     updateSchoolPassword, 
     sendAndUpdateAuthCode
 } from "../controllers/schools/schoolSettings.js";
+import { allCourses } from "../controllers/schools/extras.js";
+import { getAllQuizzes } from "../controllers/admin/adminQuiz.js";
 
 
 const schoolsRouter = express.Router();
@@ -26,6 +28,9 @@ const upload = multer({ storage });
 
 schoolsRouter.post('/verify', verifySchool);
 schoolsRouter.post('/login', login);
+
+schoolsRouter.get('/courses', allCourses)
+schoolsRouter.get('/quizzes', getAllQuizzes)
 
 // Apply authentication middleware for subsequent routes
 schoolsRouter.use(requireAuth);
