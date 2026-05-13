@@ -45,8 +45,9 @@ const schoolOverview = async(req, res) =>{
 
 const getAllStudents = async (req, res) => {
     try {
-        const schoolId = req.schoolId;
-
+        const schoolId = req.user.id;
+        console.log(schoolId);
+        
         // Fetch all students belonging to this school
         const students = await Student.find({ school: schoolId }).lean();
 
