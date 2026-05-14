@@ -101,7 +101,8 @@ const quizQuestions = async (req, res) => {
         const questions = (quiz.questions || []).map((q, idx) => ({
             number: idx + 1,
             question: q.question,
-            answers: q.answers
+            answers: q.answers,
+            correctAnd: q.correctAnswer
         }));
 
         res.status(200).json({
