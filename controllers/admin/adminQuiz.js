@@ -1,4 +1,6 @@
 import Quiz from '../../models/Quiz.js';
+import Course from '../../models/Course.js';
+
 
 // Controller function to create a new quiz
 const createQuiz = async (req, res) => {
@@ -28,6 +30,7 @@ const createQuiz = async (req, res) => {
             }
         }
 
+        // First, create the quiz
         const newQuiz = new Quiz({
             title,
             timeInMinutes,
@@ -37,6 +40,15 @@ const createQuiz = async (req, res) => {
         });
 
         const savedQuiz = await newQuiz.save();
+
+        // Now, update the Course document to push this quiz's _id to its quizzes array
+        if (course) {
+            await Course.findByIdAndUpdate(
+                course,
+                { $push: { quizzes: savedQuiz._id } },
+                { new: true }
+            );
+        }
 
         res.status(201).json({
             status: "SUCCESS",
