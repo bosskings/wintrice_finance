@@ -19,6 +19,12 @@ const quizSchema = new mongoose.Schema({
         enum: [1, 2, 3, 4, 5, 6],
     },
 
+    course: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+        required: true
+    },
+
     questions: [
         {
             question: {

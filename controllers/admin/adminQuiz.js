@@ -3,7 +3,7 @@ import Quiz from '../../models/Quiz.js';
 // Controller function to create a new quiz
 const createQuiz = async (req, res) => {
     try {
-        const { title, timeInMinutes, questions, grade } = req.body;
+        const { title, timeInMinutes, questions, grade, course } = req.body;
 
         // Validate input
         if (!title || !Array.isArray(questions) || questions.length === 0) {
@@ -32,7 +32,8 @@ const createQuiz = async (req, res) => {
             title,
             timeInMinutes,
             questions,
-            grade
+            grade,
+            course
         });
 
         const savedQuiz = await newQuiz.save();
