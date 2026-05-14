@@ -128,7 +128,8 @@ const quizResults = async (req, res) => {
             });
         }
 
-        const quiz = await Quiz.findById(quizId).lean();
+        // Get latest quiz info (lean not needed, as we'll update later)
+        const quiz = await Quiz.findById(quizId);
         if (!quiz) {
             return res.status(404).json({
                 status: "FAILED",
@@ -189,6 +190,28 @@ const quizResults = async (req, res) => {
             ).lean();
         } else {
             quizResult = updatedStudent;
+        }
+
+        // Update the Quiz document by adding the student's id to the "students" array if not already present
+        // Add with details if desired, or just the studentId
+        // Check if already present
+        const hasStudent = quiz.students && quiz.students.some(
+            s =>
+                (typeof s.studentId !== "undefined" && (
+                    (typeof s.studentId.equals === "function" && s.studentId.equals(student._id)) ||
+                    String(s.studentId) === String(student._id)
+                ))
+        );
+        if (!hasStudent) {
+            quiz.students = quiz.students || [];
+            quiz.students.push({
+                studentId: student._id,
+                score: score,
+                completionTime: completionTime,
+                complete: true,
+                dateWritten: new Date()
+            });
+            await quiz.save();
         }
 
         res.status(200).json({
