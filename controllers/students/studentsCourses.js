@@ -148,7 +148,7 @@ const viewCourse = async (req, res) => {
             status: "SUCCESS",
             course: {
                 id: course._id,
-                name: course.name,
+                name: course.title,
                 courseCode: course.courseCode,
                 gradeLevel: course.gradeLevel,
                 duration: course.duration,
