@@ -102,7 +102,7 @@ const quizQuestions = async (req, res) => {
             number: idx + 1,
             question: q.question,
             answers: q.answers,
-            correctAnd: q.correctAnswer
+            correctAns: q.correctAnswer
         }));
 
         res.status(200).json({
