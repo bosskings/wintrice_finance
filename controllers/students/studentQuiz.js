@@ -1,5 +1,6 @@
 import Quiz from '../../models/Quiz.js';
 import Student from '../../models/Student.js';
+import sendEmail from '../../utils/sendEmail.js'; 
 
 /**
  * Get all quizzes available for the logged-in student's grade.
@@ -194,8 +195,6 @@ const quizResults = async (req, res) => {
         }
 
         // Update the Quiz document by adding the student's id to the "students" array if not already present
-        // Add with details if desired, or just the studentId
-        // Check if already present
         const hasStudent = quiz.students && quiz.students.some(
             s =>
                 (typeof s.studentId !== "undefined" && (
@@ -214,6 +213,56 @@ const quizResults = async (req, res) => {
             });
             await quiz.save();
         }
+
+        // --- Send email with results using shared sendEmail utility ---
+
+        try {
+            const studentName = student.name || student.firstName || 'Student';
+            const quizTitle = quiz.title || 'the quiz';
+
+            // Format completionTime, assuming it's in seconds
+            function formatTime(sec) {
+                if (!sec && sec !== 0) return '-';
+                const mins = Math.floor(sec / 60);
+                const secs = sec % 60;
+                return `${mins}m ${secs}s`;
+            }
+
+            // Compose the email HTML, consistent style with schoolsStudents.js
+            const emailHtml = `
+                <div style="background-color: #1E90FF; color: #fff; padding: 24px; font-family: Arial, sans-serif; border-radius: 8px;">
+                    <div style="background-color: #fff; color: #1E90FF; padding: 24px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(30,144,255,0.12);">
+                        <h1 style="color: #1E90FF; margin-bottom: 16px;">Quiz Result</h1>
+                        <p style="font-size: 18px; color: #1E90FF;">
+                            Dear <strong>${studentName}</strong>,<br/>
+                            Thank you for completing <span style="color:#16a085">${quizTitle}</span>.
+                        </p>
+                        <div style="font-size: 16px; color: #1E90FF;">
+                            <strong>Score:</strong> ${score} / ${quiz.questions.length} <br/>
+                            <strong>Time Completed:</strong> ${formatTime(completionTime)} <br/>
+                            <strong>Result:</strong>
+                            <span style="font-weight:bold; color: ${result === 'PASSED' ? '#27ae60' : '#e74c3c'};">
+                                ${result}
+                            </span><br/>
+                        </div>
+                        <p style="margin: 24px 0 0 0; color: #1E90FF;">
+                            ${result === 'PASSED'
+                                ? 'Congratulations on passing your quiz! Keep up the great work.'
+                                : 'You did not pass this time. Don’t give up—keep practicing!'}
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            const emailSubject = `Your Result for ${quizTitle}`;
+            if (student.email) {
+                await sendEmail(student.email, emailSubject, emailHtml);
+            }
+        } catch (mailError) {
+            // Do not block response on mail failure, but log it
+            console.error('Email sending failed:', mailError);
+        }
+        // --- END email results ---
 
         res.status(200).json({
             status: "SUCCESS",
