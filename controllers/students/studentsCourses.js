@@ -146,19 +146,7 @@ const viewCourse = async (req, res) => {
 
         res.status(200).json({
             status: "SUCCESS",
-            course: {
-                id: course._id,
-                name: course.title,
-                courseCode: course.courseCode,
-                gradeLevel: course.gradeLevel,
-                duration: course.duration,
-                coverImage: course.coverImage,
-                files: course.files,
-                category: course.category,
-                description: course.description,
-                status: course.status,
-                createdAt: course.createdAt
-            }
+            course: course
         });
     } catch (error) {
         res.status(500).json({
