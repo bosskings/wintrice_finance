@@ -177,22 +177,19 @@ const quizResults = async (req, res) => {
 
         // If already exists, update existing quiz result
         let quizResult;
-        if (!updatedStudent) {
-            quizResult = await Student.findOneAndUpdate(
-                { _id: student._id, "quizzes.quiz": quizId },
-                {
-                    $set: {
-                        "quizzes.$.dateTaken": new Date(),
-                        "quizzes.$.score": score,
-                        "quizzes.$.completionTime": completionTime,
-                        "quizzes.$.result": result
-                    }
-                },
-                { new: true }
-            ).lean();
-        } else {
-            quizResult = updatedStudent;
-        }
+        quizResult = await Student.findOneAndUpdate(
+            { _id: student._id, "quizzes.quiz": quizId },
+            {
+                $set: {
+                    "quizzes.$.dateTaken": new Date(),
+                    "quizzes.$.score": score,
+                    "quizzes.$.completionTime": completionTime,
+                    "quizzes.$.result": result
+                }
+            },
+            { new: true }
+        ).lean();
+    
 
         // Update the Quiz document by adding the student's id to the "students" array if not already present
         const hasStudent = quiz.students && quiz.students.some(
