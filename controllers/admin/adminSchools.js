@@ -155,9 +155,9 @@ const updateSchool = async (req, res) => {
     try {
         let updatedData = { ...req.body };
         let imageUrl;
-
+        
         // If there is an image file (via multer or similar middleware)
-        if (req.files && req.files.image && req.files.image[0] && req.files.image[0].buffer) {
+        if (req.file) {
             
             // S3 (R2) client setup (just like createSchool)
             const s3 = new S3Client({
@@ -168,10 +168,13 @@ const updateSchool = async (req, res) => {
                     secretAccessKey: process.env.R2_SECRET_KEY,
                 },
             });
-
-            const imageFile = req.files.image[0];
+            
+            const imageFile = req.file;
             // Convert image to webp format before uploading
             const webpBuffer = await sharp(imageFile.buffer).webp().toBuffer();
+            
+            
+            console.log(webpBuffer);
 
             const key = `${Date.now()}.webp`;
             const command = new PutObjectCommand({
