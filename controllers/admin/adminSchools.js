@@ -188,8 +188,12 @@ const updateSchool = async (req, res) => {
             updatedData.schoolLogo = imageUrl;
         }
 
-        // Update the school with ALL provided fields, possibly including the new `schoolLogo`
-        const school = await School.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+        // Use returnDocument: 'after' instead of new: true (Mongoose deprecation warning)
+        const school = await School.findByIdAndUpdate(
+            req.params.id, 
+            updatedData, 
+            { returnDocument: 'after' }
+        );
 
         if (!school) {
             return res.status(404).json({ status: "FAILED", message: "School not found." });
