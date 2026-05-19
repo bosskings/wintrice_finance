@@ -27,7 +27,7 @@ import {
     getAllSupportTickets,
     updateSupportStatus,
 } from '../controllers/admin/support.js';
-import adminOverview from '../controllers/admin/adminHome.js';
+import {adminOverview} from '../controllers/admin/adminHome.js';
 import adminLogin from '../controllers/admin/adminAuth.js';
 import { requireAuth } from '../middleware/authMiddleware.js';
 import { createQuiz,

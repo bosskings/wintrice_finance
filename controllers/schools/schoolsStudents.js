@@ -4,8 +4,7 @@ import School from '../../models/School.js';
 import Student from '../../models/Student.js';
 import sendEmail from '../../utils/sendEmail.js';
 
-const schoolOverview = async(req, res) =>{
-
+const schoolOverview = async (req, res) => {
     try {
         const schoolId = req.user.id;
 
@@ -13,7 +12,6 @@ const schoolOverview = async(req, res) =>{
         const totalStudents = await Student.countDocuments({ school: schoolId });
 
         // Total active students (assuming you have a status or isActive field)
-
         const totalActiveStudents = await Student.countDocuments({ school: schoolId, status: 'active' });
 
         // Get the school's status
@@ -33,9 +31,44 @@ const schoolOverview = async(req, res) =>{
             .limit(10)
             .lean();
 
+        // Calculate students per week for the last 4 weeks
+        // Find the number of students created in each of the past 4 weeks
+        const weeksData = [];
+        const now = new Date();
+        for (let i = 3; i >= 0; i--) {
+            const startOfWeek = new Date(now);
+            startOfWeek.setHours(0, 0, 0, 0);
+            startOfWeek.setDate(startOfWeek.getDate() - (startOfWeek.getDay() || 7) - (i * 7) + 1); // Monday start
+
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(endOfWeek.getDate() + 6);
+            endOfWeek.setHours(23, 59, 59, 999);
+
+            weeksData.push({
+                start: new Date(startOfWeek),
+                end: new Date(endOfWeek),
+            });
+        }
+
+        // Query student count in each week
+        const studentGrowth = await Promise.all(weeksData.map(async(w, idx) => {
+            const students = await Student.countDocuments({
+                school: schoolId,
+                createdAt: {
+                    $gte: w.start,
+                    $lte: w.end,
+                }
+            });
+            return {
+                week: `Week ${idx + 1}`,
+                students
+            };
+        }));
+
         res.status(200).json({
             overview,
             latestStudents,
+            studentGrowth // Array of { week, students }
         });
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
